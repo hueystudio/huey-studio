@@ -11,7 +11,7 @@ export type SocialLink = {
 export const socialLinks: SocialLink[] = [
   {
     label: 'GitHub',
-    href: 'https://github.com/huenet-x',
+    href: 'https://github.com/hueystudio',
     icon: SiGithub,
   },
   {
