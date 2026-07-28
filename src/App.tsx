@@ -6,7 +6,7 @@ import { router } from '@/routes/router'
 export default function App() {
   return (
     <QueryProvider>
-      <BrowserRouter basename="/huey-studio/">
+      <BrowserRouter basename="/">
         <RouterProvider router={router} />
       </BrowserRouter>
     </QueryProvider>
