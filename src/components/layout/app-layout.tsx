@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
+import { SiteFooter } from '@/components/layout/site-footer'
 import { SiteHeader } from '@/components/layout/site-header'
 
 export function AppLayout() {
@@ -9,6 +10,7 @@ export function AppLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
+      <SiteFooter />
     </div>
   )
 }
