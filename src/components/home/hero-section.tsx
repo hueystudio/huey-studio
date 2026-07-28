@@ -23,7 +23,7 @@ export function HeroSection() {
             </div>
 
             <p className="max-w-xl font-sans text-base leading-8 text-muted-foreground sm:text-lg">
-              把复杂的企业级需求，做成极速、稳定、可持续演进的数字产品。
+              把复杂的企业级需求，做成极速、稳定、可持续演进的数字产品
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
