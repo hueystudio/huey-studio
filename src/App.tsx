@@ -1,4 +1,4 @@
-import { RouterProvider, BrowserRouter } from 'react-router-dom'
+import { RouterProvider } from 'react-router-dom'
 
 import { QueryProvider } from '@/providers/query-provider'
 import { router } from '@/routes/router'
@@ -6,9 +6,7 @@ import { router } from '@/routes/router'
 export default function App() {
   return (
     <QueryProvider>
-      <BrowserRouter basename="/">
-        <RouterProvider router={router} />
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </QueryProvider>
   )
 }

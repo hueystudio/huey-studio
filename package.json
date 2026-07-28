@@ -10,7 +10,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "predeploy": "pnpm run build",
-    "deploy": "gh-pages -d dist -r https://github.com/hueystudio/hueystudio.github.io.git -b main"
+    "deploy": "gh-pages -d dist -r https://github.com/hueystudio/hueystudio.github.io.git -b main --dotfiles --remove \"*\""
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
