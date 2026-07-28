@@ -2,7 +2,7 @@
 
 > 本文档记录项目从初始化到当前阶段的所有技术选型、目录结构、已完成工作与后续建议。
 >
-> 最后更新：2026-07-27
+> 最后更新：2026-07-28
 
 ---
 
@@ -10,7 +10,7 @@
 
 **Huey Studio** 是一个基于 React 18 的前端 Starter 项目，使用 Vite 作为构建工具，TypeScript 作为开发语言。项目目标是提供一套可直接扩展的现代化前端基础架构，涵盖路由、数据请求、UI 组件与样式体系。
 
-当前阶段为 **基础脚手架已完成**，包含示例页面、API 层骨架与 TanStack Query 集成，尚未接入真实后端，也未引入全局客户端状态管理库。
+当前阶段为 **个人作品集首页已落地**，包含 Hero 区、关于我三栏布局、导航与主题切换；API 层与 TanStack Query 骨架仍保留，但首页已不再展示 API 联调示例。
 
 ---
 
@@ -25,6 +25,9 @@
 | 数据请求 / 缓存 | TanStack Query | 5.x | 服务端状态管理 |
 | 样式 | Tailwind CSS | 4.x | 通过 `@tailwindcss/vite` 插件集成 |
 | UI 组件库 | ShadCN UI | 4.x | Nova 主题，Base UI 底层 |
+| 图标（UI） | Lucide React | 1.x | 导航、按钮等通用图标 |
+| 图标（品牌） | react-icons | 5.7 | GitHub / CSDN / 微博等品牌 SVG 图标 |
+| 字体 | @fontsource | 5.x | Inter（正文）、Poppins（标题）、Source Serif 4（长文） |
 | 包管理 | pnpm | 10.8.1 | 自 npm 迁移而来 |
 | 代码检查 | Oxlint | 1.x | Vite 模板自带 |
 
@@ -48,8 +51,8 @@
 
 - **组件库底层**：Base UI（`@base-ui/react`）
 - **主题预设**：Nova
-- **图标库**：Lucide React
-- **字体**：Geist Variable（`@fontsource-variable/geist`）
+- **通用图标库**：Lucide React（`lucide-react`）
+- **字体**：Inter Variable + Poppins + Source Serif 4（见 [3.7 字体体系](#37-字体体系调整)）
 - **配置文件**：根目录 `components.json`
 
 ---
@@ -189,7 +192,7 @@ npx shadcn@latest init -t vite -b base -p nova -y
 | `lucide-react` | ^1.27.0 | `components.json` 中 `"iconLibrary": "lucide"` |
 | `@base-ui/react` | ^1.6.0 | `components.json` 中 `"style": "base-nova"`；`button.tsx` 引用 `@base-ui/react/button` |
 | `tw-animate-css` | ^1.4.0 | `src/index.css` 中 `@import "tw-animate-css"` |
-| `@fontsource-variable/geist` | ^5.3.0 | `-p nova` 预设使用 Geist 字体；`index.css` 中 `@import "@fontsource-variable/geist"` |
+| `@fontsource-variable/geist` | — | ShadCN init 时曾引入，**已移除**，见 [3.7 字体体系](#37-字体体系调整) |
 | `shadcn` | ^4.15.0 | CLI 本身及其 `@import "shadcn/tailwind.css"` 样式依赖 |
 
 > **注意**：`tailwindcss` 与 `@tailwindcss/vite` 是在 **3.2 第 1 步** 手动安装的，不属于 `shadcn init` 自动安装的依赖。若跳过第 1 步，`shadcn init` 会因检测不到 Tailwind 而失败。
@@ -198,7 +201,7 @@ npx shadcn@latest init -t vite -b base -p nova -y
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+/* 字体见 3.7，当前为 Inter / Poppins / Source Serif 4 */
 /* ... CSS 变量、.dark 主题、@layer base ... */
 ```
 
@@ -225,12 +228,13 @@ rm -rf @
    - 使用嵌套路由 + 布局组件 `AppLayout`
 
 2. **页面层**（`src/pages/`）
-   - `home-page.tsx`：展示 API + TanStack Query 联调示例
-   - `about-page.tsx`：静态介绍页
+   - `home-page.tsx`：组合 Hero 区与关于我区块
+   - `about-page.tsx`：独立关于页（占位）
+   - `placeholder-page.tsx`：服务项目 / 案例 / 专栏占位页
 
-3. **布局组件**（`src/components/layout/app-layout.tsx`）
-   - 顶部导航栏
-   - 主内容区 `<Outlet />`
+3. **布局组件**（`src/components/layout/`）
+   - `site-header.tsx`：Logo、导航、EN、主题切换
+   - `app-layout.tsx`：顶栏 + `<Outlet />`
 
 4. **Provider 层**（`src/providers/query-provider.tsx`）
    - 全局 `QueryClientProvider`
@@ -259,7 +263,7 @@ rm -rf @
 
 5. 创建 `src/vite-env.d.ts`：为 `VITE_API_BASE_URL` 提供 TypeScript 类型
 
-6. 首页接入 API 层，通过 `useQuery` 展示示例数据
+6. 首页曾接入 API 层做 TanStack Query 演示，改版后已移除；API 骨架仍保留在 `src/api/`，供后续业务接入
 
 ### 3.5 包管理迁移（npm → pnpm）
 
@@ -278,6 +282,127 @@ rm -rf @
    - **Message**：`Initial commit: React + Vite starter for Huey Studio.`
    - **范围**：31 个文件，不含 `.env`、`node_modules`、`dist`
 
+### 3.7 字体体系调整
+
+ShadCN 初始化时默认引入 **Geist Variable**，后续按设计规范替换为 Inter / Poppins / Source Serif 4。
+
+#### 安装命令
+
+```bash
+pnpm add @fontsource-variable/inter @fontsource/poppins @fontsource/source-serif-4
+pnpm remove @fontsource-variable/geist
+```
+
+#### 在 `src/index.css` 中引入
+
+```css
+@import "@fontsource-variable/inter";
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+@import "@fontsource/source-serif-4/400.css";
+@import "@fontsource/source-serif-4/600.css";
+```
+
+#### 字体分工（`@theme inline` + `@layer base`）
+
+| 用途 | 字体 | CSS 变量 / 类名 |
+|------|------|-----------------|
+| 标题 | Poppins | `--font-heading`，作用于 `h1–h6` |
+| 正文 / UI | Inter Variable | `--font-sans`，作用于 `body`、`p` |
+| 长文阅读 | Source Serif 4 | `--font-prose`，类名 `.prose-content` |
+
+#### 设计色板（`:root` / `.dark`）
+
+- **主色 Primary**：`#0F172A` / `#1E293B`（商务深蓝）
+- **强调色 Accent**：`#06B6D4`、`#3B82F6`（电光青 / 科技蓝）
+- **背景 Background**：浅色 `#F8FAFC`；深色 `#090D16`（冷调深黑，非纯黑）
+
+### 3.8 react-icons 安装与使用
+
+#### 为什么需要 react-icons
+
+Lucide React **不包含** GitHub、CSDN、微博等品牌 Logo。首页 Hero 区的社交链接需要真实品牌图标，因此引入 [react-icons](https://react-icons.github.io/react-icons/)（内置 Simple Icons 等品牌 SVG）。
+
+#### 安装命令
+
+```bash
+pnpm add react-icons
+```
+
+当前版本：`react-icons@5.7.0`（已写入 `package.json`）。
+
+> 安装时若遇网络波动（如 `ECONNRESET`），pnpm 会自动重试；也可切换镜像后重新执行 `pnpm install`。
+
+#### 项目中的用法
+
+**1. 在常量中配置社交链接与图标**（`src/constants/home-content.ts`）：
+
+```ts
+import type { IconType } from 'react-icons'
+import { SiCsdn, SiGithub, SiSinaweibo } from 'react-icons/si'
+
+export const socialLinks = [
+  { label: 'GitHub', href: 'https://github.com/', icon: SiGithub },
+  { label: 'CSDN', href: 'https://blog.csdn.net/', icon: SiCsdn },
+  { label: '微博', href: 'https://weibo.com/', icon: SiSinaweibo },
+]
+```
+
+**2. 在组件中渲染图标**（`src/components/home/social-icon-buttons.tsx`）：
+
+```tsx
+import { socialLinks } from '@/constants/home-content'
+
+{socialLinks.map((item) => {
+  const Icon = item.icon
+  return (
+    <a key={item.label} href={item.href} aria-label={item.label}>
+      <Icon className="size-[18px]" />
+    </a>
+  )
+})}
+```
+
+#### 图标来源说明
+
+| 包路径 | 说明 | 本项目使用 |
+|--------|------|------------|
+| `react-icons/si` | Simple Icons（品牌 Logo） | `SiGithub`、`SiCsdn`、`SiSinaweibo` |
+| `react-icons/fa6` | Font Awesome 6 | 未使用，可按需引入 |
+| `lucide-react` | 通用 UI 图标 | 导航箭头、邮件、主题切换等 |
+
+> **注意**：不要从 `lucide-react` 导入 `Github`（该导出不存在，会导致运行时白屏）。品牌图标统一走 `react-icons/si`。
+
+#### 替换为真实链接
+
+编辑 `src/constants/home-content.ts` 中各平台的 `href` 字段即可。
+
+### 3.9 首页改版（Hero + 关于我）
+
+按设计稿将首页拆为两个区块，并由 `home-page.tsx` 组合：
+
+```
+src/pages/home-page.tsx
+├── HeroSection      # src/components/home/hero-section.tsx
+└── AboutSection     # src/components/home/about-section.tsx
+```
+
+**Hero 区（`hero-section.tsx`）**
+
+- 左侧：标语、Huey / Huang 分色标题、副标题、CTA 按钮、社交图标、三列统计数据、「向下浏览」
+- 右侧：肖像图（`src/assets/hero-portrait.png`）+ 「现可承接新项目」状态徽章
+
+**关于我（`about-section.tsx`）**
+
+- 三栏：01 教育背景 / 02 职业经历 / 03 未来方向
+- 文案集中在 `src/constants/home-content.ts` 的 `aboutSections`
+
+**导航栏（`site-header.tsx`）**
+
+- 圆形渐变 Logo **H.** + Huey Studio
+- 右侧 **EN** 按钮（占位）+ 深色模式切换
+
 ---
 
 ## 4. 目录结构
@@ -294,17 +419,26 @@ huey-studio/
 │   │   ├── client.ts          # HTTP 客户端封装
 │   │   ├── app.ts             # 业务接口
 │   │   └── index.ts           # 统一导出
-│   ├── assets/                # 图片、SVG 等资源
+│   ├── assets/
+│   │   └── hero-portrait.png  # 首页肖像
 │   ├── components/
+│   │   ├── home/
+│   │   │   ├── hero-section.tsx         # Hero 区
+│   │   │   ├── about-section.tsx        # 关于我三栏
+│   │   │   └── social-icon-buttons.tsx  # 社交图标（react-icons）
 │   │   ├── layout/
-│   │   │   └── app-layout.tsx # 全局布局
+│   │   │   ├── app-layout.tsx   # 全局布局
+│   │   │   └── site-header.tsx  # 顶栏导航
 │   │   └── ui/
-│   │       └── button.tsx     # ShadCN Button 组件
+│   │       └── button.tsx       # ShadCN Button 组件
+│   ├── constants/
+│   │   └── home-content.ts      # 首页文案、社交链接、统计数据
 │   ├── lib/
-│   │   └── utils.ts           # cn() 等工具函数
-│   ├── pages/                 # 页面组件（按路由组织）
-│   │   ├── home-page.tsx
-│   │   └── about-page.tsx
+│   │   └── utils.ts             # cn() 等工具函数
+│   ├── pages/
+│   │   ├── home-page.tsx        # 首页（组合 Hero + About）
+│   │   ├── about-page.tsx
+│   │   └── placeholder-page.tsx
 │   ├── providers/
 │   │   └── query-provider.tsx # TanStack Query Provider
 │   ├── routes/
@@ -368,8 +502,9 @@ huey-studio/
 
 | 路由 | 文件 | 功能 |
 |------|------|------|
-| `/` | `src/pages/home-page.tsx` | 首页，含 API + Query 示例 |
-| `/about` | `src/pages/about-page.tsx` | 关于页，静态内容 |
+| `/` | `src/pages/home-page.tsx` | 作品集首页：Hero + 关于我 |
+| `/services` `/cases` `/blog` | `placeholder-page.tsx` | 占位页 |
+| `/about` | `about-page.tsx` | 关于页 |
 
 布局与导航由 `AppLayout` 统一管理。
 
@@ -407,19 +542,37 @@ src/api/
 
 ---
 
-## 7. 数据流示例（首页）
+## 7. 首页结构说明
 
-以首页加载示例文章为例：
+当前首页由两个 Section 组成：
 
-1. `HomePage` 调用 `useQuery({ queryKey: ['sample-post'], queryFn: getSamplePost })`
-2. `getSamplePost()` 在 `src/api/app.ts` 中定义，内部调用 `request('/posts/1')`
-3. `request()` 读取 `VITE_API_BASE_URL`，发起 `fetch` 请求
-4. TanStack Query 管理 loading / error / cache / refetch 状态
-5. 页面根据 Query 状态渲染标题、正文或错误信息
+```
+HomePage
+├── HeroSection
+│   ├── 标语 / 标题 / 副标题
+│   ├── CTA 按钮 + SocialIconButtons（react-icons）
+│   ├── heroStats 三列数据
+│   └── 肖像图 + 状态徽章
+└── AboutSection
+    └── aboutSections 三栏（01 / 02 / 03）
+```
+
+文案与链接统一维护在 `src/constants/home-content.ts`，修改内容无需改动组件逻辑。
 
 ---
 
-## 8. Git 与版本控制
+## 8. API 数据流（骨架，供后续接入）
+
+API 层仍可用于后续业务接口，示例流程如下：
+
+1. 在 `src/api/` 定义接口函数（如 `getSamplePost()`）
+2. 页面或 Hook 中通过 `useQuery` / `useMutation` 调用
+3. `request()` 读取 `VITE_API_BASE_URL` 发起请求
+4. TanStack Query 管理 loading / cache / error 状态
+
+---
+
+## 9. Git 与版本控制
 
 ### 已忽略（不提交）
 
@@ -439,7 +592,7 @@ src/api/
 
 ---
 
-## 9. 快速开始
+## 10. 快速开始
 
 ```bash
 # 克隆 / 进入项目目录后
@@ -458,7 +611,7 @@ pnpm dev
 
 ---
 
-## 10. 常用开发操作
+## 11. 常用开发操作
 
 ### 添加 ShadCN 组件
 
@@ -467,6 +620,23 @@ pnpm dlx shadcn@latest add card input dialog
 ```
 
 组件会安装到 `src/components/ui/`。
+
+### 添加品牌社交图标
+
+1. 在 [Simple Icons](https://simpleicons.org/) 查找图标名（如 `github` → `SiGithub`）
+2. 从 `react-icons/si` 导入并写入 `src/constants/home-content.ts`：
+
+```ts
+import { SiGithub } from 'react-icons/si'
+
+{ label: 'GitHub', href: 'https://github.com/你的用户名', icon: SiGithub }
+```
+
+3. `SocialIconButtons` 会自动渲染，无需改组件逻辑
+
+### 修改首页文案
+
+编辑 `src/constants/home-content.ts` 中的 `socialLinks`、`heroStats`、`aboutSections` 即可。
 
 ### 添加新页面与路由
 
@@ -510,7 +680,7 @@ export default defineConfig({
 
 ---
 
-## 11. 后续建议
+## 12. 后续建议
 
 以下为当前阶段尚未完成、但建议在业务推进时逐步补充的内容：
 
@@ -542,17 +712,18 @@ src/
 
 ---
 
-## 12. 注意事项
+## 13. 注意事项
 
 1. **包管理器**：项目已统一使用 pnpm，请勿混用 npm / yarn，避免锁文件冲突。
 2. **环境变量**：`.env` 含本地配置，切勿提交；只提交 `.env.example`。
 3. **React 版本**：依赖锁定在 React 18，升级至 React 19 需评估类型与生态兼容性。
 4. **React Router**：当前为 v6，与 v7 API 存在差异，升级前需阅读迁移指南。
-5. **ShadCN 组件路径**：添加组件后确认文件落在 `src/components/ui/`，而非根目录 `@/`。
+5. **ShadCN 组件路径**：添加组件后确认文件落在 `src/components/ui/`，而非根目录 `@/`
+6. **品牌图标**：使用 `react-icons/si`，勿从 `lucide-react` 导入不存在的 `Github` 导出。
 
 ---
 
-## 13. 参考链接
+## 14. 参考链接
 
 - [Vite 文档](https://vite.dev/)
 - [React 文档](https://react.dev/)
@@ -561,3 +732,6 @@ src/
 - [Tailwind CSS v4](https://tailwindcss.com/docs)
 - [ShadCN UI](https://ui.shadcn.com/)
 - [pnpm 文档](https://pnpm.io/)
+- [react-icons](https://react-icons.github.io/react-icons/)
+- [Simple Icons（品牌 Logo 索引）](https://simpleicons.org/)
+- [Fontsource（Web 字体）](https://fontsource.org/)
