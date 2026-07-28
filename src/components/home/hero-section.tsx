@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Mail } from 'lucide-react'
+import { ArrowUpRight, Mail } from 'lucide-react'
 
 import { SocialIconButtons } from '@/components/home/social-icon-buttons'
 import { Button } from '@/components/ui/button'
@@ -27,13 +27,13 @@ export function HeroSection() {
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
-              {/* <Button
+              <Button
                 className="h-11 rounded-full bg-accent px-6 font-medium text-accent-foreground shadow-[0_10px_30px_-12px_rgba(6,182,212,0.55)] hover:bg-accent/90"
                 render={<Link to="/cases" />}
               >
                 查看精选案例
                 <ArrowUpRight className="size-4" />
-              </Button> */}
+              </Button>
               <Button
                 variant="outline"
                 className="h-11 rounded-full border-border bg-background px-6 font-medium hover:bg-muted/70"

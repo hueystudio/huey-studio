@@ -43,9 +43,9 @@ export function SiteHeader() {
             <span className="block font-heading text-sm font-semibold tracking-tight text-foreground">
               Huey Studio
             </span>
-            {/* <span className="block text-[10px] font-medium tracking-[0.18em] text-muted-foreground">
-              FULL-STACK
-            </span> */}
+            <span className="block text-[10px] font-medium tracking-[0.18em] text-muted-foreground">
+            Build your world with care and curiosity
+            </span>
           </span>
         </Link>
 
